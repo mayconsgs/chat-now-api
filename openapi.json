@@ -1,0 +1,26 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "chat-now-api",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Maycon Santos",
+      "email": "maycon.s.santos44@gmail.com",
+      "url": "https://mayconsgs.vercel.app"
+    }
+  },
+  "paths": {
+    "/auth": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "message": { "schema": { "type": "string" } }
+            },
+            "description": "Faz a autenticação do usuário"
+          }
+        }
+      }
+    }
+  }
+}
