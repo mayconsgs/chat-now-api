@@ -20,4 +20,6 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.resource('users', 'UsersController').apiOnly().except(['index'])
+Route.group(() => {
+  Route.resource('users', 'UsersController').apiOnly()
+})
