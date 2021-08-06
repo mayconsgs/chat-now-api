@@ -4,11 +4,7 @@ import User from 'App/Models/User'
 
 export default class UsersController {
   public async store({ request }: HttpContextContract) {
-    const {
-      password: passwordHash,
-      avatar,
-      ...userData
-    } = await request.validate({
+    const { avatar, ...userData } = await request.validate({
       schema: schema.create({
         firstName: schema.string(),
         lastName: schema.string.optional(),
@@ -24,7 +20,6 @@ export default class UsersController {
 
     const user = await User.create({
       ...userData,
-      passwordHash,
     })
 
     return user.serialize()

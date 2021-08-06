@@ -25,7 +25,10 @@ export default class User extends BaseModel {
   @column()
   public email: string
   @column({ serializeAs: null })
-  public passwordHash: string
+  public password: string
+
+  @column()
+  public rememberMeToken?: string
 
   @column({ serializeAs: 'shareCode' })
   public shareCode: string
@@ -44,9 +47,9 @@ export default class User extends BaseModel {
   }
 
   @beforeSave()
-  public static async hashSecrets(user: User) {
-    if (user.$dirty.passwordHash) {
-      user.passwordHash = await Hash.make(user.passwordHash)
+  public static async hashPassword(user: User) {
+    if (user.$dirty.password) {
+      user.password = await Hash.make(user.password)
     }
 
     user.shareCode = Encryption.encrypt(user.id)
