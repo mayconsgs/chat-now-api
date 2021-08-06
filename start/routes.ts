@@ -20,4 +20,4 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.resource('users', 'UsersController').apiOnly().except(['index'])
+Route.resource('users', 'UsersController').only(['store', 'show'])
