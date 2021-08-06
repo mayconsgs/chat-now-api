@@ -1,4 +1,6 @@
-import { BaseModel, beforeCreate, column } from '@ioc:Adonis/Lucid/Orm'
+import Encryption from '@ioc:Adonis/Core/Encryption'
+import Hash from '@ioc:Adonis/Core/Hash'
+import { BaseModel, beforeCreate, beforeSave, column, computed } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 
@@ -8,15 +10,15 @@ export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: string
 
-  @beforeCreate()
-  public static assignUuid(user: User) {
-    user.id = uuid()
+  @column({ serializeAs: 'firstName' })
+  public firstName: string
+  @column({ serializeAs: 'lastName' })
+  public lastName: string | null
+  @computed()
+  public get fullName() {
+    return this.firstName + (this.lastName ? ' ' + this.lastName : '')
   }
 
-  @column()
-  public firstName: string
-  @column()
-  public lastName: string | null
   @column()
   public bio: string | null
 
@@ -25,9 +27,9 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public passwordHash: string
 
-  @column()
+  @column({ serializeAs: 'shareCode' })
   public shareCode: string
-  @column()
+  @column({ serializeAs: 'avatarUrl' })
   public avatarUrl: string | null
 
   @column.dateTime({ autoCreate: true, serializeAs: null })
@@ -35,4 +37,18 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   public updatedAt: DateTime
+
+  @beforeCreate()
+  public static assignUuid(user: User) {
+    user.id = uuid()
+  }
+
+  @beforeSave()
+  public static async hashSecrets(user: User) {
+    if (user.$dirty.passwordHash) {
+      user.passwordHash = await Hash.make(user.passwordHash)
+    }
+
+    user.shareCode = Encryption.encrypt(user.id)
+  }
 }
