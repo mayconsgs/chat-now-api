@@ -46,10 +46,25 @@ export default class ChatsController {
     }
   }
 
-  public show({ params }: HttpContextContract) {
+  public async show({ params }: HttpContextContract) {
     const { id: encryptId } = params
     const id = Encryption.decrypt<number>(encryptId)
 
-    return Chat.findOrFail(id)
+    const chat = await Chat.findOrFail(id)
+    await chat.load('users')
+
+    return chat
+  }
+
+  public async join({ auth, params }: HttpContextContract) {
+    const { id: encryptId } = params
+    const id = Encryption.decrypt<number>(encryptId)
+
+    const chat = await Chat.findOrFail(id)
+
+    await chat.related('users').save(auth.user!)
+    await chat.load('users')
+
+    return chat
   }
 }

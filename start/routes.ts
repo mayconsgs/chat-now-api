@@ -41,6 +41,7 @@ Route.post('login', async ({ auth, request, response }) => {
 
 Route.group(() => {
   Route.resource('chats', 'ChatsController').apiOnly().except(['destroy', 'update'])
+  Route.patch('chats/:id/join', 'ChatsController.join')
   Route.resource('users', 'UsersController').only(['show'])
 }).middleware('auth')
 
