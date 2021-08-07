@@ -1,8 +1,17 @@
 import Encryption from '@ioc:Adonis/Core/Encryption'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { BaseModel, beforeCreate, beforeSave, column, computed } from '@ioc:Adonis/Lucid/Orm'
+import {
+  BaseModel,
+  beforeCreate,
+  beforeSave,
+  column,
+  computed,
+  ManyToMany,
+  manyToMany,
+} from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
+import Chat from './Chat'
 
 export default class User extends BaseModel {
   public static selfAssignPrimaryKey = true
@@ -27,7 +36,7 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
-  @column()
+  @column({ serializeAs: null })
   public rememberMeToken?: string
 
   @column({ serializeAs: 'shareCode' })
@@ -40,6 +49,9 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   public updatedAt: DateTime
+
+  @manyToMany(() => Chat)
+  public chats: ManyToMany<typeof Chat>
 
   @beforeCreate()
   public static assignUuid(user: User) {

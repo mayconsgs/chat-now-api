@@ -29,7 +29,16 @@ export default class UsersController {
     const { id } = params
 
     const user = await User.findOrFail(id)
+    await user.load('chats')
 
-    return user?.serialize()
+    return user?.serialize({
+      relations: {
+        chats: {
+          fields: {
+            omit: ['shareCode'],
+          },
+        },
+      },
+    })
   }
 }
