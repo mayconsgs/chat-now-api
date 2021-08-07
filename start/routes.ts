@@ -39,5 +39,9 @@ Route.post('login', async ({ auth, request, response }) => {
   }
 })
 
-Route.resource('users', 'UsersController').only(['store', 'show'])
-Route.resource('chats', 'ChatsController').only(['store', 'show'])
+Route.group(() => {
+  Route.resource('chats', 'ChatsController').apiOnly().except(['destroy', 'update'])
+  Route.resource('users', 'UsersController').only(['show'])
+}).middleware('auth')
+
+Route.resource('users', 'UsersController').only(['store'])
