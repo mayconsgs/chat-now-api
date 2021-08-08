@@ -1,17 +1,14 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
-import { UserModel } from 'App/Database/Models/UserModel'
+import User from 'App/Models/User'
 
 export default class UsersController {
-  public async index({}: HttpContextContract) {
-    return ''
-  }
-
-  public async store({ request }: HttpContextContract) {
-    const { avatar, ...userData } = await request.validate({
+  public async store({ request, auth }: HttpContextContract) {
+    const { password, avatar, ...userData } = await request.validate({
       schema: schema.create({
         firstName: schema.string(),
         lastName: schema.string.optional(),
+        bio: schema.string.optional(),
         email: schema.string({}, [rules.email()]),
         password: schema.string({}, [rules.minLength(8)]),
         avatar: schema.file.optional({
@@ -21,24 +18,28 @@ export default class UsersController {
       }),
     })
 
-    const user = new UserModel(userData)
-    await user.validate()
-    const iserted = await user.save()
-    return iserted
+    const user = await User.create({
+      ...userData,
+      password,
+    })
+
+    return await auth.use('web').attempt(user.email, password)
   }
 
   public async show({ params }: HttpContextContract) {
     const { id } = params
-    const user = await UserModel.findById(id)
 
-    return user
-  }
+    const user = await User.findOrFail(id)
+    await user.load('chats')
 
-  public async update({}: HttpContextContract) {
-    return ''
-  }
-
-  public async destroy({}: HttpContextContract) {
-    return ''
+    return user?.serialize({
+      relations: {
+        chats: {
+          fields: {
+            omit: ['shareCode'],
+          },
+        },
+      },
+    })
   }
 }
