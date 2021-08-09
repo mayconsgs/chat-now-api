@@ -43,6 +43,7 @@ Route.group(() => {
   Route.resource('users', 'UsersController').only(['show'])
   Route.resource('chats', 'ChatsController').apiOnly().except(['destroy', 'update'])
   Route.patch('chats/:id/join', 'ChatsController.join')
+  Route.patch('chats/:id/visualize', 'ChatsController.visualize')
   Route.resource('chats.messages', 'MessagesController').only(['store'])
 }).middleware('auth')
 

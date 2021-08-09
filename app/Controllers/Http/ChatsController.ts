@@ -80,6 +80,14 @@ export default class ChatsController {
       })
       .firstOrFail()
 
+    await Promise.all(
+      chat.messages.map((e) => {
+        if (e.userId === auth.user?.id) {
+          return e.load('views')
+        }
+      })
+    )
+
     return chat.serialize({
       relations: {
         users: {
@@ -110,5 +118,38 @@ export default class ChatsController {
     await chat.load('users')
 
     return chat
+  }
+
+  public async visualize({ params, auth, response }: HttpContextContract) {
+    const { id: encryptId } = params
+    const id = Encryption.decrypt<number>(encryptId)
+
+    if (!id) return response.notFound('Chat not found')
+
+    const chat = await Chat.query()
+      .whereHas('users', (query) => {
+        query.where('id', auth.user?.id!)
+      })
+      .where('id', id)
+      .firstOrFail()
+
+    const messages = await chat
+      .related('messages')
+      .query()
+      .whereDoesntHave('views', (query) => {
+        query.whereHas('user', (query) => {
+          query.where('user_id', auth.user?.id!)
+        })
+      })
+
+    await Promise.all(
+      messages.map((mess) =>
+        mess.related('views').create({
+          userId: auth.user?.id!,
+        })
+      )
+    )
+
+    return response.noContent()
   }
 }

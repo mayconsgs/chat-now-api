@@ -6,15 +6,12 @@ import {
   beforeSave,
   column,
   computed,
-  HasMany,
-  hasMany,
   ManyToMany,
-  manyToMany
+  manyToMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
 import { v4 as uuid } from 'uuid'
 import Chat from './Chat'
-import Message from './Message'
 
 export default class User extends BaseModel {
   public static selfAssignPrimaryKey = true
@@ -68,7 +65,4 @@ export default class User extends BaseModel {
       user.shareCode = Encryption.encrypt(user.id)
     }
   }
-
-  @hasMany(() => Message)
-  public messages: HasMany<typeof Message>
 }

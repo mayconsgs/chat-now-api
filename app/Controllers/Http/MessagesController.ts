@@ -37,6 +37,7 @@ export default class MessagesController {
 
       await message.related('chat').associate(chat)
       await message.related('user').associate(auth.user!)
+      await message.related('views').create({ userId: auth.user?.id })
       await chat.merge({ updatedAt: DateTime.now() }).save()
       await message.load('user')
 
