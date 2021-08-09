@@ -46,14 +46,40 @@ export default class ChatsController {
     }
   }
 
-  public async show({ params }: HttpContextContract) {
-    const { id: encryptId } = params
-    const id = Encryption.decrypt<number>(encryptId)
+  public async show({ params, response, auth }: HttpContextContract) {
+    const { id: chatId } = params
+    const id = Encryption.decrypt<number>(chatId)
+    if (!id) return response.notFound('Chat not found')
 
-    const chat = await Chat.findOrFail(id)
-    await chat.load('users')
+    const chat = await Chat.query()
+      .whereHas('users', (query) => {
+        query.where('id', auth.user?.id!)
+      })
+      .where('id', id)
+      .preload('users')
+      .preload('messages', (preloadMessages) => {
+        preloadMessages.preload('user')
+      })
+      .firstOrFail()
 
-    return chat
+    return chat.serialize({
+      relations: {
+        users: {
+          fields: {
+            pick: ['id', 'avatar', 'fullName'],
+          },
+        },
+        messages: {
+          relations: {
+            user: {
+              fields: {
+                pick: ['id', 'avatar', 'fullName'],
+              },
+            },
+          },
+        },
+      },
+    })
   }
 
   public async join({ auth, params }: HttpContextContract) {

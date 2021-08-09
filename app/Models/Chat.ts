@@ -1,5 +1,6 @@
-import { BaseModel, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, HasMany, hasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
+import Message from './Message'
 import User from './User'
 export default class Chat extends BaseModel {
   @column({ isPrimary: true, serializeAs: null })
@@ -24,4 +25,7 @@ export default class Chat extends BaseModel {
     pivotTable: 'chat_user',
   })
   public users: ManyToMany<typeof User>
+
+  @hasMany(() => Message)
+  public messages: HasMany<typeof Message>
 }
