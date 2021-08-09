@@ -4,12 +4,13 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Chat from 'App/Models/Chat'
 import Message from 'App/Models/Message'
+import { DateTime } from 'luxon'
 
 export default class MessagesController {
   public async store({ params, request, auth, response }: HttpContextContract) {
     const { chat_id: chatId } = params
     const id = Encryption.decrypt<number>(chatId)
-    if (!id) return response.notFound('Chat not found')
+    if (!id) return response.unprocessableEntity('Invalid chat ID')
 
     const { text } = await request.validate({
       schema: schema.create({
@@ -22,32 +23,36 @@ export default class MessagesController {
         query.where('id', auth.user?.id!)
       })
       .where('id', id)
-      .preload('users')
-      .preload('messages', (preloadMessages) => {
-        preloadMessages.preload('user')
-      })
       .firstOrFail()
 
     const trx = await Database.transaction()
 
     try {
-      const message = new Message().useTransaction(trx)
       chat.useTransaction(trx)
-      auth.user?.useTransaction(trx)
+      const message = new Message()
+        .fill({
+          text,
+        })
+        .useTransaction(trx)
 
-      message.fill({
-        text,
-      })
-
-      await Promise.all([
-        chat?.related('messages').save(message),
-        auth.user?.related('messages').save(message),
-      ])
+      await message.related('chat').associate(chat)
+      await message.related('user').associate(auth.user!)
+      await chat.merge({ updatedAt: DateTime.now() }).save()
+      await message.load('user')
 
       await trx.commit()
 
-      return chat
+      return message.serialize({
+        relations: {
+          user: {
+            fields: {
+              pick: ['id', 'avatar', 'fullName'],
+            },
+          },
+        },
+      })
     } catch (error) {
+      trx.rollback()
       throw error
     }
   }

@@ -7,7 +7,7 @@ export default class Message extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ serializeAs: null })
+  @column()
   public text: string
 
   @column({ serializeAs: null })
