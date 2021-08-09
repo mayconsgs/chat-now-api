@@ -5,11 +5,30 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import Chat from 'App/Models/Chat'
 export default class ChatsController {
   public async index({ auth }: HttpContextContract) {
-    const chats = Chat.query().whereHas('users', (query) => {
-      query.where('id', auth.user?.id!)
-    })
+    const chats = await Chat.query()
+      .orderBy('updatedAt', 'desc')
+      .preload('messages', (preloadMessages) => {
+        preloadMessages.groupOrderBy('created_at', 'desc').groupLimit(1).preload('user')
+      })
+      .whereHas('users', (query) => {
+        query.where('id', auth.user?.id!)
+      })
 
-    return chats
+    return chats.map((e) =>
+      e.serialize({
+        relations: {
+          messages: {
+            relations: {
+              user: {
+                fields: {
+                  pick: ['id', 'avatar', 'fullName'],
+                },
+              },
+            },
+          },
+        },
+      })
+    )
   }
 
   public async store({ request, auth }: HttpContextContract) {
@@ -23,6 +42,7 @@ export default class ChatsController {
     const trx = await Database.transaction()
 
     try {
+      auth.user?.useTransaction(trx)
       const chat = new Chat()
         .fill({
           description,
@@ -30,9 +50,6 @@ export default class ChatsController {
           title,
         })
         .useTransaction(trx)
-
-      auth.user?.useTransaction(trx)
-      chat.useTransaction(trx)
 
       await auth.user!.related('chats').save(chat)
       chat.shareCode = Encryption.encrypt(chat.id)
@@ -42,18 +59,45 @@ export default class ChatsController {
 
       return chat
     } catch (error) {
+      await trx.rollback()
       throw error
     }
   }
 
-  public async show({ params }: HttpContextContract) {
-    const { id: encryptId } = params
-    const id = Encryption.decrypt<number>(encryptId)
+  public async show({ params, response, auth }: HttpContextContract) {
+    const { id: chatId } = params
+    const id = Encryption.decrypt<number>(chatId)
+    if (!id) return response.notFound('Chat not found')
 
-    const chat = await Chat.findOrFail(id)
-    await chat.load('users')
+    const chat = await Chat.query()
+      .whereHas('users', (query) => {
+        query.where('id', auth.user?.id!)
+      })
+      .where('id', id)
+      .preload('users')
+      .preload('messages', (preloadMessages) => {
+        preloadMessages.orderBy('createdAt', 'desc').preload('user')
+      })
+      .firstOrFail()
 
-    return chat
+    return chat.serialize({
+      relations: {
+        users: {
+          fields: {
+            pick: ['id', 'avatar', 'fullName'],
+          },
+        },
+        messages: {
+          relations: {
+            user: {
+              fields: {
+                pick: ['id', 'avatar', 'fullName'],
+              },
+            },
+          },
+        },
+      },
+    })
   }
 
   public async join({ auth, params }: HttpContextContract) {
