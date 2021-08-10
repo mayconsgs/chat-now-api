@@ -28,5 +28,8 @@ export default Env.rules({
   PG_PASSWORD: Env.schema.string.optional(),
   PG_DB_NAME: Env.schema.string(),
 
+  SUPABASE_URL: Env.schema.string({ format: 'url' }),
+  SUPABASE_KEY: Env.schema.string(),
+
   SESSION_DRIVER: Env.schema.string(),
 })
