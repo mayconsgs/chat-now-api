@@ -29,8 +29,10 @@ export default class UsersController {
       const fileName = `${cuid()}.${avatar.extname}`
       const path = `public/${fileName}`
 
-      await supabase.storage.from('avatars').upload(path, fs.createReadStream(avatar.tmpPath!))
-      const { publicURL } = supabase.storage.from('avatars').getPublicUrl(path)
+      const bucket = supabase.storage.from('avatars')
+      await bucket.upload(path, fs.createReadStream(avatar.tmpPath!))
+      const { publicURL } = bucket.getPublicUrl(path)
+
       user.avatarUrl = publicURL
       await user.save()
     }
@@ -42,16 +44,7 @@ export default class UsersController {
     const { id } = params
 
     const user = await User.findOrFail(id)
-    await user.load('chats')
 
-    return user?.serialize({
-      relations: {
-        chats: {
-          fields: {
-            omit: ['shareCode'],
-          },
-        },
-      },
-    })
+    return user
   }
 }
