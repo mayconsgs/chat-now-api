@@ -31,7 +31,7 @@ export default class ChatsController {
     )
   }
 
-  public async store({ request, auth }: HttpContextContract) {
+  public async store({ request, auth, response }: HttpContextContract) {
     const { title, description } = await request.validate({
       schema: schema.create({
         title: schema.string(),
@@ -57,7 +57,7 @@ export default class ChatsController {
 
       await trx.commit()
 
-      return chat
+      return response.created(chat)
     } catch (error) {
       await trx.rollback()
       throw error
@@ -108,7 +108,7 @@ export default class ChatsController {
     })
   }
 
-  public async join({ auth, params }: HttpContextContract) {
+  public async join({ auth, params, response }: HttpContextContract) {
     const { id: encryptId } = params
     const id = Encryption.decrypt<number>(encryptId)
 
@@ -117,7 +117,7 @@ export default class ChatsController {
     await chat.related('users').save(auth.user!)
     await chat.load('users')
 
-    return chat
+    return response.ok(chat)
   }
 
   public async visualize({ params, auth, response }: HttpContextContract) {
