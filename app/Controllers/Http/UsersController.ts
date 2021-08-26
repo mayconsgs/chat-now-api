@@ -6,7 +6,7 @@ import fs from 'fs'
 import supabase from 'Services/supabase'
 
 export default class UsersController {
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, auth }: HttpContextContract) {
     const { password, avatar, ...userData } = await request.validate({
       schema: schema.create({
         firstName: schema.string(),
@@ -37,7 +37,8 @@ export default class UsersController {
       await user.save()
     }
 
-    return response.redirect('/login')
+    const userAuth = await auth.use('web').attempt(user.email, password)
+    return response.created(userAuth)
   }
 
   public async show({ params }: HttpContextContract) {
@@ -46,5 +47,9 @@ export default class UsersController {
     const user = await User.findOrFail(id)
 
     return user
+  }
+
+  public async getMe({ auth }: HttpContextContract) {
+    return auth.user
   }
 }
