@@ -1,4 +1,5 @@
 import Encryption from '@ioc:Adonis/Core/Encryption'
+import Event from '@ioc:Adonis/Core/Event'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
@@ -42,6 +43,8 @@ export default class MessagesController {
       await message.load('user')
 
       await trx.commit()
+
+      Event.emit('new:message', id)
 
       return message.serialize({
         relations: {

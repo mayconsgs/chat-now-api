@@ -2,8 +2,8 @@ import { cuid } from '@ioc:Adonis/Core/Helpers'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User'
+import supabase from 'App/Services/Supabase'
 import fs from 'fs'
-import supabase from 'Services/supabase'
 
 export default class UsersController {
   public async store({ request, response, auth }: HttpContextContract) {

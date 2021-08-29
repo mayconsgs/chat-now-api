@@ -14,7 +14,18 @@
     "Contracts": "contracts",
     "Services": "services"
   },
-  "preloads": ["./start/routes", "./start/kernel"],
+  "preloads": [
+    "./start/routes",
+    "./start/kernel",
+    {
+      "file": "./start/events",
+      "environment": [
+        "console",
+        "repl",
+        "web"
+      ]
+    }
+  ],
   "providers": [
     "./providers/AppProvider",
     "@adonisjs/core",
@@ -22,5 +33,7 @@
     "@adonisjs/auth",
     "@adonisjs/session"
   ],
-  "aceProviders": ["@adonisjs/repl"]
+  "aceProviders": [
+    "@adonisjs/repl"
+  ]
 }
