@@ -21,6 +21,7 @@
                 "properties": {
                   "firstName": { "type": "string" },
                   "lastName": { "type": "string" },
+                  "bio": { "type": "string" },
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string" },
                   "avatar": { "type": "string", "format": "binary" }
@@ -34,11 +35,15 @@
             "description": "User created",
             "content": {
               "aplication/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string", "example": "Usuário criado com sucesso" }
-                  }
+                "example": {
+                  "id": "0802c59d-725b-42c9-bf24-872529856f09",
+                  "firstName": "Maycon",
+                  "lastName": "Santos",
+                  "bio": "Descricao",
+                  "email": "maycon.s.santos44@gmail.com",
+                  "shareCode": "1ypPWv9Nk8mVESEdK-6pb9pHv3zoNGqk0NPUOqdUIgAzppQLuL4HEITYfAr8po8oSQ27KQ5yWq57t0AHxT3NBg.N25pemJDNUZWY3hqRlF6bA.dL8-xjoD4ypPPBrluH1Cm6Q6xwF7hElAuE_gIfoLmWo",
+                  "avatarUrl": "https://pivqxzdurkrqobnfmvia.supabase.co/storage/v1/object/public/avatars/public/cks6ppl15000dsrpk1mvse6bq.png",
+                  "fullName": "Maycon Santos"
                 }
               }
             }
@@ -53,8 +58,15 @@
             "description": "Get user data",
             "content": {
               "type": {
-                "schema": {
-                  "$ref": "#/components/schemas/user"
+                "example": {
+                  "id": "0802c59d-725b-42c9-bf24-872529856f09",
+                  "firstName": "Maycon",
+                  "lastName": "Santos",
+                  "bio": "Descricao",
+                  "email": "maycon.s.santos44@gmail.com",
+                  "shareCode": "1ypPWv9Nk8mVESEdK-6pb9pHv3zoNGqk0NPUOqdUIgAzppQLuL4HEITYfAr8po8oSQ27KQ5yWq57t0AHxT3NBg.N25pemJDNUZWY3hqRlF6bA.dL8-xjoD4ypPPBrluH1Cm6Q6xwF7hElAuE_gIfoLmWo",
+                  "avatarUrl": "https://pivqxzdurkrqobnfmvia.supabase.co/storage/v1/object/public/avatars/public/cks6ppl15000dsrpk1mvse6bq.png",
+                  "fullName": "Maycon Santos"
                 }
               }
             }
@@ -67,10 +79,10 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["firstName", "email", "password"],
                 "properties": {
                   "firstName": { "type": "string" },
                   "lastName": { "type": "string" },
+                  "bio": { "type": "string" },
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string" },
                   "avatar": { "type": "string", "format": "binary" }
@@ -84,11 +96,15 @@
             "description": "User updated",
             "content": {
               "aplication/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string", "example": "Usuário atualizado com sucesso" }
-                  }
+                "example": {
+                  "id": "0802c59d-725b-42c9-bf24-872529856f09",
+                  "firstName": "Maycon",
+                  "lastName": "Santos",
+                  "bio": "Descricao",
+                  "email": "maycon.s.santos44@gmail.com",
+                  "shareCode": "1ypPWv9Nk8mVESEdK-6pb9pHv3zoNGqk0NPUOqdUIgAzppQLuL4HEITYfAr8po8oSQ27KQ5yWq57t0AHxT3NBg.N25pemJDNUZWY3hqRlF6bA.dL8-xjoD4ypPPBrluH1Cm6Q6xwF7hElAuE_gIfoLmWo",
+                  "avatarUrl": "https://pivqxzdurkrqobnfmvia.supabase.co/storage/v1/object/public/avatars/public/cks6ppl15000dsrpk1mvse6bq.png",
+                  "fullName": "Maycon Santos"
                 }
               }
             }
@@ -101,29 +117,19 @@
             "description": "Apaga somente o usuário que está logado",
             "content": {
               "aplication/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string", "example": "Usuário excluído" }
-                  }
+                "example": {
+                  "id": "0802c59d-725b-42c9-bf24-872529856f09",
+                  "firstName": "Maycon",
+                  "lastName": "Santos",
+                  "bio": "Descricao",
+                  "email": "maycon.s.santos44@gmail.com",
+                  "shareCode": "1ypPWv9Nk8mVESEdK-6pb9pHv3zoNGqk0NPUOqdUIgAzppQLuL4HEITYfAr8po8oSQ27KQ5yWq57t0AHxT3NBg.N25pemJDNUZWY3hqRlF6bA.dL8-xjoD4ypPPBrluH1Cm6Q6xwF7hElAuE_gIfoLmWo",
+                  "avatarUrl": "https://pivqxzdurkrqobnfmvia.supabase.co/storage/v1/object/public/avatars/public/cks6ppl15000dsrpk1mvse6bq.png",
+                  "fullName": "Maycon Santos"
                 }
               }
             }
           }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "user": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "avatar": { "type": "string" }
         }
       }
     }
