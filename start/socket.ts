@@ -11,6 +11,6 @@ Ws.io.on('connection', (socket) => {
   })
 
   socket.on('sendMessage', (chat, message) => {
-    socket.to(chat).emit('newMessage', chat, message)
+    Ws.io.to(chat).emit('newMessage', chat, message)
   })
 })
