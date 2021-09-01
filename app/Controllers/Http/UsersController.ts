@@ -27,7 +27,7 @@ export default class UsersController {
 
     if (avatar) {
       const fileName = `${cuid()}.${avatar.extname}`
-      const path = `public/${fileName}`
+      const path = `users/${fileName}`
 
       const bucket = supabase.storage.from('avatars')
       await bucket.upload(path, fs.createReadStream(avatar.tmpPath!))
