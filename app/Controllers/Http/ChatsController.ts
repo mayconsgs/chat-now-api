@@ -76,7 +76,7 @@ export default class ChatsController {
       .where('id', id)
       .preload('users')
       .preload('messages', (preloadMessages) => {
-        preloadMessages.orderBy('createdAt', 'asc').preload('user')
+        preloadMessages.orderBy('createdAt', 'desc').preload('user')
       })
       .firstOrFail()
 
