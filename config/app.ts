@@ -5,12 +5,12 @@
  * file.
  */
 
-import proxyAddr from 'proxy-addr'
 import Env from '@ioc:Adonis/Core/Env'
-import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { LoggerConfig } from '@ioc:Adonis/Core/Logger'
 import { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
+import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
+import proxyAddr from 'proxy-addr'
 
 /*
 |--------------------------------------------------------------------------
@@ -105,8 +105,8 @@ export const http: ServerConfig = {
     domain: '',
     path: '/',
     maxAge: '2h',
-    httpOnly: true,
-    secure: false,
+    httpOnly: Env.get('NODE_ENV') !== 'production',
+    secure: Env.get('NODE_ENV') === 'production',
     sameSite: false,
   },
 
