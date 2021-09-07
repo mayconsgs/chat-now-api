@@ -105,7 +105,7 @@ export const http: ServerConfig = {
     domain: '',
     path: '/',
     maxAge: '2h',
-    // httpOnly: Env.get('NODE_ENV') !== 'production',
+    httpOnly: false,
     secure: Env.get('NODE_ENV') === 'production',
     sameSite: false,
   },
