@@ -88,7 +88,7 @@ const sessionConfig: SessionConfig = {
     path: '/',
     httpOnly: Env.get('NODE_ENV') !== 'production',
     secure: Env.get('NODE_ENV') === 'production',
-    sameSite: false,
+    sameSite: 'none',
   },
 
   /*
