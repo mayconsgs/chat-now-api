@@ -39,6 +39,16 @@ Route.post('login', async ({ auth, request, response }) => {
   }
 })
 
+Route.post('logout', async ({ auth, response }) => {
+  if (auth.use('web').viaRemember) {
+    await auth.use('web').logout(true)
+  } else {
+    await auth.use('web').logout()
+  }
+
+  return response.noContent()
+})
+
 Route.group(() => {
   Route.get('users/me', 'UsersController.getMe')
   Route.resource('users', 'UsersController').only(['show'])
