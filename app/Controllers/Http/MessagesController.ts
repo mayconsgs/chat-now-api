@@ -35,7 +35,7 @@ export default class MessagesController {
       relations: {
         user: {
           fields: {
-            pick: ['id', 'avatar', 'fullName'],
+            pick: ['id', 'avatarUrl', 'fullName'],
           },
         },
       },
