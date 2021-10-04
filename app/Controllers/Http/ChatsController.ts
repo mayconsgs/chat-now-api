@@ -75,33 +75,13 @@ export default class ChatsController {
       })
       .where('id', id)
       .preload('users')
-      .preload('messages', (preloadMessages) => {
-        preloadMessages.orderBy('createdAt', 'asc').preload('user')
-      })
       .firstOrFail()
-
-    await Promise.all(
-      chat.messages.map((e) => {
-        if (e.userId === auth.user?.id) {
-          return e.load('views')
-        }
-      })
-    )
 
     return chat.serialize({
       relations: {
         users: {
           fields: {
             pick: ['id', 'avatar', 'fullName'],
-          },
-        },
-        messages: {
-          relations: {
-            user: {
-              fields: {
-                pick: ['id', 'avatar', 'fullName'],
-              },
-            },
           },
         },
       },

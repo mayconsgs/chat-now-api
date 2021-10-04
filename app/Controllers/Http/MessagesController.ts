@@ -7,6 +7,41 @@ import Message from 'App/Models/Message'
 import { DateTime } from 'luxon'
 
 export default class MessagesController {
+  public async index({ params, request, response, auth }: HttpContextContract) {
+    const { chat_id: chatId } = params
+    const id = Encryption.decrypt<number>(chatId)
+    if (!id) return response.unprocessableEntity('Invalid chat ID')
+    const { page } = await request.validate({
+      schema: schema.create({
+        page: schema.number.optional(),
+      }),
+    })
+
+    const chat = await Chat.query()
+      .whereHas('users', (query) => {
+        query.where('id', auth.user?.id!)
+      })
+      .where('id', id)
+      .firstOrFail()
+
+    const messages = await chat
+      .related('messages')
+      .query()
+      .orderBy('createdAt', 'desc')
+      .preload('user')
+      .paginate(page || 1, 50)
+
+    return messages.serialize({
+      relations: {
+        user: {
+          fields: {
+            pick: ['id', 'avatar', 'fullName'],
+          },
+        },
+      },
+    })
+  }
+
   public async store({ params, request, auth, response }: HttpContextContract) {
     const { chat_id: chatId } = params
     const id = Encryption.decrypt<number>(chatId)

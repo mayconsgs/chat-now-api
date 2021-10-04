@@ -45,7 +45,6 @@ Route.post('logout', async ({ auth, response }) => {
   } else {
     await auth.use('web').logout()
   }
-
   return response.noContent()
 })
 
@@ -55,7 +54,7 @@ Route.group(() => {
   Route.resource('chats', 'ChatsController').apiOnly().except(['destroy', 'update'])
   Route.patch('chats/:id/join', 'ChatsController.join')
   Route.patch('chats/:id/visualize', 'ChatsController.visualize')
-  Route.resource('chats.messages', 'MessagesController').only(['store'])
+  Route.resource('chats.messages', 'MessagesController').only(['store', 'index'])
 }).middleware('auth')
 
 Route.resource('users', 'UsersController').only(['store'])
