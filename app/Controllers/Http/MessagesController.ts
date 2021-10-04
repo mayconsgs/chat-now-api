@@ -1,6 +1,6 @@
 import Encryption from '@ioc:Adonis/Core/Encryption'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Chat from 'App/Models/Chat'
 import Message from 'App/Models/Message'
@@ -13,7 +13,7 @@ export default class MessagesController {
     if (!id) return response.unprocessableEntity('Invalid chat ID')
     const { page } = await request.validate({
       schema: schema.create({
-        page: schema.number.optional(),
+        page: schema.number.optional([rules.unsigned()]),
       }),
     })
 
