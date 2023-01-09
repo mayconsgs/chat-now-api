@@ -31,7 +31,7 @@
     "@adonisjs/session": "^6.1.2",
     "@supabase/supabase-js": "^1.22.6",
     "@types/socket.io": "^3.0.2",
-    "luxon": "^2.0.2",
+    "luxon": "^2.5.2",
     "pg": "^8.7.1",
     "phc-argon2": "^1.1.2",
     "phc-bcrypt": "^1.0.7",
